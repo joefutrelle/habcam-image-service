@@ -1,0 +1,20 @@
+<namespace name="imgsrv">
+  <rule name="pid" include="pid tags path ext">
+    <!-- example PIDs:
+    201503.20150519.164302671.12850.jpg
+    201503.20150519.164302671.12850_corrected.png
+    201503.20150519.164302671.12850_orig_L.gif
+    201503.20150519.164302671.12850_anaglyph.gif
+    -->
+    <match var="pid" pattern="(\d{6}\.\d{8}\.\d{9})\.(\d+)(?:_([\w_]+))?\.(\w+)" groups="ts seq tags ext"/>
+    <match var="ts" timestamp="111111.yyyymmdd.HHMMSSsss"/>
+    <match value="${MM}" pattern="(.)." groups="tenmin"/>
+    <var name="tenmin">${tenmin}0</var>
+    <var name="y">${yyyy}</var>
+    <var name="ym">${y}${mm}</var>
+    <var name="ymd">${ym}${dd}</var>
+    <var name="ymdh">${ymd}_${HH}</var>
+    <var name="ymdht">${ymdh}${tenmin}</var>
+    <var name="path">${y}/${ym}/${ymd}/${ymdh}/${ymdht}/${ts}.${seq}.png</var>
+  </rule>
+</namespace>
