@@ -20,8 +20,11 @@
     <var name="ymdh">${ymd}_${HH}</var>
     <var name="ymdht">${ymdh}${tenmin}</var>
     <var name="filename">${head}.${ts}.${seq}${roi_create_time}</var>
-    <!-- construct the relative path with no extension on the image file -->
-    <var name="path">${y}/${ym}/${ymd}/${ymdh}/${ymdht}/${filename}</var>
+    <!-- construct the relative path variations with no extension on the image file -->
+    <var name="path">
+      <val>${y}/${ym}/${ymd}/${ymdh}/${ymdht}/${filename}</val>
+      <val>${y}/${filename}</val>
+    </var>
   </rule>
   <!-- pass "pid" and "root" to this rule -->
   <rule name="find_file" uses="pid root" include="pid root file file_ext">

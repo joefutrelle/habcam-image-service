@@ -1,4 +1,5 @@
 import json
+import mimetypes
 
 from flask import Flask, Response
 
@@ -6,6 +7,13 @@ from ladder import get_resolver
 
 from oii.utils import memoize
 from oii.webapi.utils import UrlConverter
+from oii.webapi.image_service.utils import image_response
+from oii.image.io import imread
+
+ROOTS=[
+    '/mnt/david3/habcam/assignment_images/proc',
+    '/mnt/david4/habcam/ROIs'
+]
 
 # configure app
 app = Flask(__name__)
@@ -18,9 +26,14 @@ def R():
 
 # endpoints
 @app.route('/image/<url:pid>')
-def index(pid):
-    solutions = list(R().pid(pid=pid))
-    return Response(json.dumps(solutions),mimetype='application/json')
+def service(pid):
+    for root in ROOTS:
+        for s in R().find_file(pid=pid,root=root):
+            path = s['file']
+            image = imread(path)
+            return image_response(image,path)
+    # didn't find anything
+    abort(404)
 
 if __name__=='__main__':
     app.run(host='0.0.0.0',port=8888,debug=True)
