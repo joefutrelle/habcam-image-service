@@ -1,13 +1,17 @@
 <namespace name="imgsrv">
-  <rule name="pid" include="pid tags path ext">
+  <rule name="pid" uses="pid" include="pid tags path ext">
     <!-- example PIDs:
     201503.20150519.164302671.12850.jpg
     201503.20150519.164302671.12850_corrected.png
     201503.20150519.164302671.12850_orig_L.gif
     201503.20150519.164302671.12850_anaglyph.gif
     -->
-    <match var="pid" pattern="(\d{6}\.\d{8}\.\d{9})\.(\d+)(?:_([\w_]+))?\.(\w+)" groups="ts seq tags ext"/>
-    <match var="ts" timestamp="111111.yyyymmdd.HHMMSSsss"/>
+    <!-- defaults -->
+    <var name="tags"></var>
+    <var name="roi_create_time"></var>
+    <match var="pid" pattern="(\w+)\.(\d{8}\.\d{9})\.(\d+)(\.\d{14})?(?:_([\w_]+))?\.(\w+)" groups="head ts seq roi_create_time tags ext"/>
+    <match var="ts" timestamp="yyyymmdd.HHMMSSsss"/>
+    <!-- construct path components -->
     <match value="${MM}" pattern="(.)." groups="tenmin"/>
     <var name="tenmin">${tenmin}0</var>
     <var name="y">${yyyy}</var>
@@ -15,6 +19,19 @@
     <var name="ymd">${ym}${dd}</var>
     <var name="ymdh">${ymd}_${HH}</var>
     <var name="ymdht">${ymdh}${tenmin}</var>
-    <var name="path">${y}/${ym}/${ymd}/${ymdh}/${ymdht}/${ts}.${seq}.png</var>
+    <var name="filename">${head}.${ts}.${seq}${roi_create_time}</var>
+    <!-- construct the relative path with no extension on the image file -->
+    <var name="path">${y}/${ym}/${ymd}/${ymdh}/${ymdht}/${filename}</var>
+  </rule>
+  <!-- pass "pid" and "root" to this rule -->
+  <rule name="find_file" uses="pid root" include="pid root file file_ext">
+    <invoke rule="imgsrv.pid"/>
+    <var name="ap">${root}/${path}</var>
+    <var name="file_ext">
+      <val>png</val>
+      <val>tif</val>
+      <val>jpg</val>
+    </var>
+    <path var="file" match="${ap}.${file_ext}"/>
   </rule>
 </namespace>

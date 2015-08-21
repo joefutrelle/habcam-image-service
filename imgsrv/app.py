@@ -13,13 +13,13 @@ app.url_map.converters['url'] = UrlConverter
 
 # ladder access
 @memoize(ttl=30)
-def resolver():
-    return get_resolver('imgsrv/resolver.xml')
+def R():
+    return get_resolver('imgsrv/resolver.xml').imgsrv
 
 # endpoints
 @app.route('/image/<url:pid>')
 def index(pid):
-    solutions = list(resolver().imgsrv.pid(pid=pid))
+    solutions = list(R().pid(pid=pid))
     return Response(json.dumps(solutions),mimetype='application/json')
 
 if __name__=='__main__':
