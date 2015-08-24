@@ -19,7 +19,17 @@ def transform_image(image, params=[]):
         elif k=='width':
             scale = float(v) / image.shape[1]
             image = rescale(image, scale)
+        elif k=='maxwidth':
+            w = float(v)
+            if image.shape[1] > w:
+                scale = w / image.shape[1]
+                image = rescale(image, scale)
         elif k=='height':
             scale = float(v) / image.shape[0]
             image = rescale(image, scale)
+        elif k=='maxheight':
+            h = float(v)
+            if image.shape[0] > h:
+                scale = h / image.shape[0]
+                image = rescale(image, scale)
     return image
