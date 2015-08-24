@@ -27,7 +27,7 @@
     </var>
   </rule>
   <!-- pass "pid" and "root" to this rule -->
-  <rule name="find_file" uses="pid root" include="pid root file file_ext">
+  <rule name="find_file" uses="pid root" include="pid root file ext file_ext">
     <invoke rule="imgsrv.pid"/>
     <var name="ap">${root}/${path}</var>
     <var name="file_ext">

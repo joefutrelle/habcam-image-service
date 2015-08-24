@@ -29,9 +29,12 @@ def R():
 def service(pid):
     for root in ROOTS:
         for s in R().find_file(pid=pid,root=root):
-            path = s['file']
-            image = imread(path)
-            return image_response(image,path)
+            path = s['file'] # actual path to file
+            image = imread(path) # read image data
+            # use a fake filename so image_response
+            # can guess correct MIME type
+            fake_filename = 'i.%s' % s['ext']
+            return image_response(image, fake_filename)
     # didn't find anything
     abort(404)
 
