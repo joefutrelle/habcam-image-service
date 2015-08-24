@@ -1,13 +1,22 @@
 import re
 
-def parse_params(path, **defaults):
-    """Parse a path fragment and convert to dict.
+from werkzeug.routing import BaseConverter
+
+def parse_params(path):
+    """Parse a path fragment and convert to a list of tuples.
     Slashes separate alternating keys and values.
-    For example /a/3/b/5 -> { 'a': '3', 'b': '5' }.
-    Any keys not present get default values from **defaults"""
+    For example /a/3/b/5 -> [ ['a', '3'], ['b', '5'] ]."""
     parts = re.split('/',path)
-    d = dict(zip(parts[:-1:2], parts[1::2]))
-    for k,v in defaults.items():
-        if k not in d:
-            d[k] = v
-    return d
+    keys = parts[:-1:2]
+    values= parts[1::2]
+    return zip(keys,values)
+
+class ParamsConverter(BaseConverter):
+    def __init__(self, url_map):
+        super(ParamsConverter, self).__init__(url_map)
+        self.regex = r'(([^/]+/[^/]+/)*[^/]+/[^/]+)'
+    def to_python(self, value):
+        return parse_params(value)
+    def to_url(self, value):
+        return value
+
