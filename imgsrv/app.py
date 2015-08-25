@@ -1,5 +1,6 @@
 import json
 import mimetypes
+import re
 
 from flask import Flask, Response, abort
 
@@ -28,6 +29,11 @@ app.url_map.converters['params'] = ParamsConverter
 def R():
     return get_resolver('imgsrv/resolver.xml').imgsrv
 
+def parse_tags(tags):
+    if tags is None:
+        return []
+    return re.split(r'_',tags)
+
 # finds and reads an image given a pid,
 # then applies params-based transformations,
 # then returns the image response
@@ -35,8 +41,9 @@ def pid2image(pid='',params=[]):
     for root in ROOTS:
         for s in R().find_file(pid=pid,root=root):
             path = s['file'] # actual path to file
+            tags = parse_tags(s.get('tags',None))
             image = imread(path) # read image data
-            image = transform_image(image, params)
+            image = transform_image(image, params, tags)
             # use a fake filename so image_response
             # can guess correct MIME type
             fake_filename = 'i.%s' % s['ext']

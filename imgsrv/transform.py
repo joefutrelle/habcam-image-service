@@ -7,6 +7,16 @@ from skimage import img_as_float
 from oii.image.transform import rescale
 from oii.image.color import scale_saturation
 
+def apply_tags(image, tags):
+    h,w = image.shape[:2]
+    if 'L' in tags:
+        image = image[:,:w/2,:]
+    elif 'R' in tags:
+        image = image[:,w/2:,:]
+    elif 'RL' in tags:
+        image = np.roll(image, w/2, 1)
+    return image
+
 def extract_roi(image, params):
     d = dict(params)
     h,w = image.shape[:2]
@@ -26,7 +36,8 @@ def extract_roi(image, params):
     else:
         return image[ry:ryh,rx:rxw,:]
 
-def transform_image(image, params=[]):
+def transform_image(image, params=[], tags=[]):
+    image = apply_tags(image, tags)
     image = extract_roi(image, params)
     for k,v in params:
         if k=='saturation':
