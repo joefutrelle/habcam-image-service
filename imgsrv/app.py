@@ -14,10 +14,7 @@ from oii.webapi.utils import UrlConverter
 from oii.webapi.image_service.utils import image_response
 from oii.image.io import imread
 
-ROOTS=[
-    '/mnt/david3/habcam/assignment_images/proc',
-    '/mnt/david4/habcam/ROIs'
-]
+from config_imgsrv import ROOTS
 
 # configure app
 app = Flask(__name__)
