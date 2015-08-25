@@ -1,7 +1,7 @@
 import json
 import mimetypes
 
-from flask import Flask, Response
+from flask import Flask, Response, abort
 
 from ladder import get_resolver
 
