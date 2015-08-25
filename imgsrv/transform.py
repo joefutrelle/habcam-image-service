@@ -3,18 +3,25 @@ import re
 import numpy as np
 
 from skimage import img_as_float
+from skimage.color import rgb2gray
 
 from oii.image.transform import rescale
 from oii.image.color import scale_saturation
+from oii.image.stereo import get_L, get_R, swap_LR, redcyan
+from imgsrv.stereo import anaglyph
 
 def apply_tags(image, tags):
     h,w = image.shape[:2]
     if 'L' in tags:
-        image = image[:,:w/2,:]
+        image = get_L(image)
     elif 'R' in tags:
-        image = image[:,w/2:,:]
+        image = get_R(image)
     elif 'RL' in tags:
-        image = np.roll(image, w/2, 1)
+        image = swap_LR(image)
+    elif 'redcyan' in tags:
+        image = redcyan(rgb2gray(image),correct_y=True)
+    elif 'anaglyph' in tags:
+        image = anaglyph(image,correct_y=True)
     return image
 
 def extract_roi(image, params):
